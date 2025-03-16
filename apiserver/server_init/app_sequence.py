@@ -25,6 +25,7 @@ from apiserver.mongo.initialize import (
 )
 from apiserver.server_init.request_handlers import RequestHandlers
 from apiserver.service_repo import ServiceRepo
+from apiserver.services.login.sso_manager import SSOManager
 from apiserver.sync import distributed_lock
 from apiserver.updates import check_updates_thread
 from apiserver.utilities.env import get_bool
@@ -61,6 +62,11 @@ class AppSequence:
         self.app.config["JSONIFY_PRETTYPRINT_REGULAR"] = config.get(
             "apiserver.pretty_json"
         )
+        
+        # Initialize SSO manager if SSO is enabled
+        if config.get("auth.sso.enabled", False):
+            from apiserver.services.login.sso_manager import sso_manager
+            sso_manager.init_app(self.app)
 
     @staticmethod
     def _get_db_instance_key() -> str:

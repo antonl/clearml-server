@@ -5,9 +5,8 @@ from apiserver.apimodels import DictField, callable_default
 
 
 class GetSupportedModesRequest(Base):
-    pass
-    # state = StringField(help_text="ASCII base64 encoded application state")
-    # callback_url_prefix = StringField()
+    state = StringField(help_text="ASCII base64 encoded application state")
+    callback_url_prefix = StringField()
 
 
 class BasicGuestMode(Base):
@@ -27,9 +26,22 @@ class ServerErrors(Base):
     es_connection_error = BoolField(default=False)
 
 
+class SSOProvider(Base):
+    id = StringField()
+    name = StringField()
+    url = StringField()
+
+
 class GetSupportedModesResponse(Base):
     basic = EmbeddedField(BasicMode)
     server_errors = EmbeddedField(ServerErrors)
     sso = DictField([str, type(None)])
     sso_providers = ListField([dict])
     authenticated = BoolField(default=False)
+
+
+class SSOLoginRequest(Base):
+    provider = StringField(required=True)
+    code = StringField(required=True)
+    state = StringField()
+    redirect_uri = StringField()
